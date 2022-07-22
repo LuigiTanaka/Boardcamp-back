@@ -1,25 +1,47 @@
 import connection from '../dbStrategy/postgres.js'
-import joi from 'joi';
 
 export async function getCustomers(req, res) {
+    const beginningOfCpf = req.query.cpf;
+    
+    if(beginningOfCpf) {
+        const { rows: customers } = await connection.query(`SELECT * FROM customers WHERE cpf LIKE $1`, [beginningOfCpf + '%']);
 
-    //tratar casos com query string
+        return res.send(customers); 
+    }
 
     const { rows: customers } = await connection.query('SELECT * FROM customers');
+
+    //verificar formato do birthday
 
     res.send(customers);
 }
 
 export async function getCustomerById(req, res) {
-    const { id } = req.params();
+    const { id } = req.params;
 
     const { rows: customer } = await connection.query('SELECT * FROM customers WHERE id = $1', [id]);
+
+    if(customer.length === 0) {
+        return res.status(404).send("cliente não encontrado");
+    }
+
+    //verificar formato do birthday
 
     res.send(customer);
 }
 
 export async function createCustomer(req, res) {
+    const { name, phone, cpf, birthday } = req.body;
 
+    console.log(birthday);
+
+    try {
+        await connection.query(`INSERT INTO customers (name, phone, cpf, birthday) VALUES ($1, $2, $3, $4)`, [name, phone, cpf, birthday]);
+
+        res.status(201).send("cliente criado com sucesso!");
+    } catch (error) {
+        res.status(500).send("erro ao criar o cliente")
+    }
 }
 
 export async function updateCustomer(req, res) {
