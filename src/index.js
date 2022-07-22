@@ -20,4 +20,4 @@ app.use(rentalsRouter);
 
 const PORT = process.env.PORT || 4001;
 
-app.listen(PORT, () => console.log("servidou rodando!"));
+app.listen(PORT, () => console.log(`servidou rodando na porta ${PORT}`));
