@@ -5,7 +5,7 @@ export async function getGames(req, res) {
     const beginningOfName = req.query.name.toLowerCase();
     
     if(beginningOfName) {
-        const { rows: games } = await connection.query(`SELECT games.*, categories.name as categoryName 
+        const { rows: games } = await connection.query(`SELECT games.*, categories.name as "categoryName" 
         FROM games 
         JOIN categories 
         ON games."categoryId" = categories.id 
@@ -14,7 +14,7 @@ export async function getGames(req, res) {
         return res.send(games); 
     }
 
-    const { rows: games } = await connection.query(`SELECT games.*, categories.name as categoryName 
+    const { rows: games } = await connection.query(`SELECT games.*, categories.name as "categoryName" 
     FROM games 
     JOIN categories 
     ON games."categoryId" = categories.id`);
