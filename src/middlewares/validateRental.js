@@ -32,6 +32,15 @@ export default async function validateRental(req, res, next) {
     }
 
     //verificar se tem jogos disponíveis
+    const { rows: stockTotal } = await connection.query(`SELECT "stockTotal" FROM games WHERE id = $1`, [newRental.gameId]);
+
+    const { rows: rentalsOfTheGame } = await connection.query(`SELECT * FROM rentals WHERE rentals."gameId" = $1`, [newRental.gameId]);
+
+    const openRentals = rentalsOfTheGame.filter(rental => rental.returnDate === null);
+
+    if(stockTotal[0].stockTotal <= openRentals.length) {
+        return res.status(400).send("não há produtos em estoque no momento");
+    }
 
     next();
 }

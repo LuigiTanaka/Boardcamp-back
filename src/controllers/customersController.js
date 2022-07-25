@@ -4,14 +4,12 @@ export async function getCustomers(req, res) {
     const beginningOfCpf = req.query.cpf;
     
     if(beginningOfCpf) {
-        const { rows: customers } = await connection.query(`SELECT * FROM customers WHERE cpf LIKE $1`, [beginningOfCpf + '%']);
+        const { rows: customers } = await connection.query(`SELECT *, birthday::VARCHAR FROM customers WHERE cpf LIKE $1`, [beginningOfCpf + '%']);
 
         return res.send(customers); 
     }
 
-    const { rows: customers } = await connection.query('SELECT * FROM customers');
-
-    //verificar formato do birthday
+    const { rows: customers } = await connection.query('SELECT *, birthday::VARCHAR FROM customers');
 
     res.send(customers);
 }
@@ -19,13 +17,11 @@ export async function getCustomers(req, res) {
 export async function getCustomerById(req, res) {
     const { id } = req.params;
 
-    const { rows: customer } = await connection.query('SELECT * FROM customers WHERE id = $1', [id]);
+    const { rows: customer } = await connection.query('SELECT *, birthday::VARCHAR FROM customers WHERE id = $1', [id]);
 
     if(customer.length === 0) {
         return res.status(404).send("cliente não encontrado");
     }
-
-    //verificar formato do birthday
 
     res.send(customer);
 }

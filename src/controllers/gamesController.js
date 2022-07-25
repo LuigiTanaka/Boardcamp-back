@@ -1,15 +1,17 @@
 import connection from '../dbStrategy/postgres.js'
 
 export async function getGames(req, res) {
-
-    const beginningOfName = req.query.name.toLowerCase();
+    const beginningOfName = req.query.name;
+    console.log(beginningOfName);
     
     if(beginningOfName) {
+        const beginningOfNameLower = beginningOfName.toLowerCase();
+    
         const { rows: games } = await connection.query(`SELECT games.*, categories.name as "categoryName" 
         FROM games 
         JOIN categories 
         ON games."categoryId" = categories.id 
-        WHERE LOWER(games.name) LIKE $1`, [beginningOfName + '%']);
+        WHERE LOWER(games.name) LIKE $1`, [beginningOfNameLower + '%']);
 
         return res.send(games); 
     }
