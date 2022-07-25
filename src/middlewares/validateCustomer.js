@@ -19,10 +19,22 @@ export default async function validateCustomer(req, res, next) {
     }
 
     //verifica se cpf já existente
-    const { rows: existingCustomerCpfs } = await connection.query(`SELECT (cpf) FROM customers`);
+    const { id } = req.params;
 
-    if(existingCustomerCpfs.some(customer => customer.cpf === newCustomer.cpf)) {
-        return res.status(409).send("cliente já existente");
+    if(!id) {
+        //criação do cliente
+        const { rows: existingCpfsCustomers } = await connection.query(`SELECT (cpf) FROM customers`);
+
+        if(existingCpfsCustomers.some(customer => customer.cpf === newCustomer.cpf)) {
+            return res.status(409).send("cpf já cadastrado");
+        }
+    }
+
+    //atualização do cliente
+    const { rows: existingCpfsFromOtherCustomers } = await connection.query(`SELECT (cpf) FROM customers WHERE customers.id <> $1`, [id]);
+
+    if(existingCpfsFromOtherCustomers.some(customer => customer.cpf === newCustomer.cpf)) {
+        return res.status(409).send("cpf já cadastrado");
     }
 
     next();
