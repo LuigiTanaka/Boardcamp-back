@@ -19,11 +19,13 @@ export async function getCustomerById(req, res) {
 
     const { rows: customer } = await connection.query('SELECT *, birthday::VARCHAR FROM customers WHERE id = $1', [id]);
 
+    console.log(customer);
+
     if(customer.length === 0) {
         return res.status(404).send("cliente não encontrado");
     }
 
-    res.send(customer);
+    res.send(customer[0]);
 }
 
 export async function createCustomer(req, res) {
