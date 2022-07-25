@@ -9,7 +9,7 @@ export default async function validateCustomer(req, res, next) {
         name: joi.string().trim().required(),
         phone: joi.string().pattern(/^(\d{10,11})$/).required(),
         cpf: joi.string().pattern(/^(\d{11})$/).required(),
-        birthday: joi.string().pattern(/^\d{4}\-(0?[1-9]|1[012])\-(0?[1-9]|[12][0-9]|3[01])$/).required(),
+        birthday: joi.date().max('now').required()
     });
 
     const { error } = customerSchema.validate(newCustomer);
